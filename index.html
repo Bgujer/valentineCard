@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Be my Valentine?</title>
+  <style>
+    :root { --bg: #ffe6ee; --card: #fff; --text:#222; }
+    body{
+      margin:0; height:100vh; display:grid; place-items:center;
+      background: radial-gradient(circle at top, #fff, var(--bg));
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+    }
+    .card{
+      width:min(520px, 92vw);
+      background:var(--card);
+      border-radius:24px;
+      padding:28px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.12);
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    h1{ margin:0 0 18px; font-size:clamp(22px, 4vw, 34px); }
+    .buttons{
+      margin-top:20px;
+      height:140px;
+      position:relative;
+    }
+    button{
+      border:0;
+      padding:14px 22px;
+      border-radius:999px;
+      font-size:18px;
+      cursor:pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      transition: transform .12s ease;
+      user-select:none;
+      touch-action: none;
+    }
+    #yes{ background:#ff4d6d; color:white; }
+    #yes:hover{ transform: translateY(-2px); }
+    #no{ background:#e9e9e9; }
+    .msg{
+      margin-top:18px;
+      font-size:22px;
+      font-weight:700;
+      min-height:1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <h1>Will you be my Valentine? 💘</h1>
+
+    <div class="buttons" id="arena">
+      <button id="yes" style="position:absolute; left: 42%; top: 30%;">Yes</button>
+      <button id="no"  style="position:absolute; left: 58%; top: 30%;">No</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script>
+    const arena = document.getElementById("arena");
+    const noBtn  = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const msg    = document.getElementById("msg");
+
+    // Move the "No" button somewhere else inside the arena
+    function teleportNoButton() {
+      const pad = 10;
+
+      const a = arena.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+
+      const maxX = a.width  - b.width  - pad;
+      const maxY = a.height - b.height - pad;
+
+      const x = pad + Math.random() * Math.max(0, maxX);
+      const y = pad + Math.random() * Math.max(0, maxY);
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top  = `${y}px`;
+    }
+
+    // If the cursor (or finger) gets close, the "No" runs away
+    function onPointerMove(e) {
+      const a = arena.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+
+      const px = e.clientX - a.left;
+      const py = e.clientY - a.top;
+
+      const bx = (b.left - a.left) + b.width / 2;
+      const by = (b.top  - a.top ) + b.height/ 2;
+
+      const dist = Math.hypot(px - bx, py - by);
+
+      if (dist < 90) teleportNoButton();
+    }
+
+    // Desktop + mobile support
+    arena.addEventListener("pointermove", onPointerMove);
+    noBtn.addEventListener("pointerenter", teleportNoButton);
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); teleportNoButton(); });
+
+    yesBtn.addEventListener("click", () => {
+      msg.textContent = "YAY!! 🥳💖";
+      noBtn.style.display = "none";
+      yesBtn.textContent = "😄";
+    });
+
+    // Start with a random spot so it feels playful
+    teleportNoButton();
+  </script>
+</body>
+</html>
