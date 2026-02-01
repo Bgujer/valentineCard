@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Be my Valentine?</title>
+
   <style>
     :root{
       --bg1:#ffd6e6;
@@ -15,64 +16,38 @@
       --yes2:#ff7aa2;
       --no:#f1f1f1;
     }
+
     *{ box-sizing:border-box; }
+
     body{
-      margin:0; height:100vh; overflow:hidden;
-      display:grid; place-items:center;
+      margin:0;
+      height:100vh;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1000px 600px at 20% 10%, #fff, transparent 60%),
-        radial-gradient(900px 700px at 80% 20%, #fff, transparent 55%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
-    }
-
-    /* Floating background blobs */
-    .blob{
-      position:absolute; inset:auto;
-      width:340px; height:340px; border-radius:50%;
-      filter: blur(24px);
-      opacity:.55;
-      animation: drift 10s ease-in-out infinite alternate;
-      pointer-events:none;
-    }
-    .blob.b1{ background:#ff5d8f; left:-80px; top:-80px; animation-duration:12s; }
-    .blob.b2{ background:#ffd166; right:-120px; top:40px; animation-duration:14s; }
-    .blob.b3{ background:#7bdff2; left:20px; bottom:-140px; animation-duration:16s; opacity:.35; }
-
-    @keyframes drift{
-      from{ transform: translate(0,0) scale(1); }
-      to{ transform: translate(40px,30px) scale(1.05); }
+      background: linear-gradient(135deg,var(--bg1),var(--bg2));
     }
 
     .card{
-      width:min(560px, 92vw);
-      padding:28px 26px 22px;
+      width:min(560px,92vw);
+      padding:28px;
       border-radius:28px;
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      box-shadow: 0 30px 90px rgba(0,0,0,.18);
+      background:var(--card);
       backdrop-filter: blur(10px);
-      position:relative;
-      isolation:isolate;
-      transform: translateY(6px);
-      animation: popIn .6s cubic-bezier(.2,.8,.2,1) forwards;
-    }
-    @keyframes popIn{
-      from{ opacity:0; transform: translateY(18px) scale(.98); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
+      box-shadow:0 30px 90px rgba(0,0,0,.18);
+      text-align:center;
     }
 
     .title{
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      margin:0 0 8px;
-      font-size: clamp(22px, 4vw, 36px);
-      letter-spacing:-0.5px;
-    }
-    .subtitle{
+      font-size: clamp(22px,4vw,36px);
       margin:0;
-      opacity:.75;
-      font-size: 15px;
+    }
+
+    .subtitle{
+      opacity:.7;
+      font-size:14px;
+      margin-top:6px;
     }
 
     .arena{
@@ -80,9 +55,8 @@
       height:170px;
       border-radius:22px;
       position:relative;
-      background: linear-gradient(180deg, #ffffffaa, #ffffff55);
-      border: 1px dashed #ffffffaa;
-      overflow:hidden;
+      background:#ffffff80;
+      border:1px dashed #ffffffaa;
     }
 
     button{
@@ -91,210 +65,138 @@
       border-radius:999px;
       font-size:18px;
       cursor:pointer;
-      box-shadow: 0 12px 30px rgba(0,0,0,.14);
-      user-select:none;
-      touch-action: none;
       position:absolute;
-      transition: transform .12s ease, filter .12s ease;
+      box-shadow:0 12px 30px rgba(0,0,0,.14);
     }
-    button:active{ transform: scale(.98); }
+
     #yes{
-      left: 38%; top: 36%;
+      left:38%;
+      top:36%;
       color:white;
-      background: linear-gradient(135deg, var(--yes), var(--yes2));
+      background:linear-gradient(135deg,var(--yes),var(--yes2));
     }
-    #yes:hover{ filter: brightness(1.05); transform: translateY(-2px); }
+
     #no{
-      left: 56%; top: 36%;
-      background: var(--no);
+      left:56%;
+      top:36%;
+      background:var(--no);
     }
 
     .msg{
       margin-top:14px;
-      min-height: 40px;
-      font-size: 20px;
-      font-weight: 800;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
+      font-size:20px;
+      font-weight:bold;
+      min-height:30px;
     }
 
-    .badge{
-      display:inline-flex;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      background:#ffffff90;
-      border:1px solid #ffffffaa;
-      position:absolute;
-      top:14px; right:14px;
-      opacity:.85;
+    /* GIF styling */
+    .gif{
+      width:min(260px,80%);
+      margin:14px auto 0;
+      border-radius:18px;
+      display:block;
+      box-shadow:0 12px 30px rgba(0,0,0,.15);
+      animation: gifPop .5s ease;
     }
 
-    /* Little heart particles */
+    @keyframes gifPop{
+      from{transform:scale(.85);opacity:0;}
+      to{transform:scale(1);opacity:1;}
+    }
+
+    /* floating heart particles */
     .heart{
       position:absolute;
       font-size:18px;
       pointer-events:none;
       animation: floatUp 900ms ease-out forwards;
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
-    }
-    @keyframes floatUp{
-      from{ transform: translateY(0) scale(.9); opacity:1; }
-      to{ transform: translateY(-60px) scale(1.25); opacity:0; }
     }
 
-    /* Confetti-ish burst for win */
-    .burst{
-      position:absolute; inset:0;
-      pointer-events:none;
-      opacity:0;
-      transition: opacity .2s ease;
-    }
-    .burst.show{ opacity:1; }
-    .burst span{
-      position:absolute;
-      width:10px; height:10px;
-      border-radius:3px;
-      background: white;
-      opacity:.9;
-      animation: pop 900ms cubic-bezier(.2,.8,.2,1) forwards;
-    }
-    @keyframes pop{
-      from{ transform: translate(0,0) rotate(0deg) scale(.7); opacity:1; }
-      to{ transform: translate(var(--dx), var(--dy)) rotate(240deg) scale(1.1); opacity:0; }
+    @keyframes floatUp{
+      from{transform:translateY(0);opacity:1;}
+      to{transform:translateY(-60px);opacity:0;}
     }
   </style>
 </head>
+
 <body>
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
 
-  <div class="card" id="card">
-    <div class="badge">💌 made with love</div>
+  <div class="card">
 
-    <h1 class="title">Will you be my Valentine? <span aria-hidden="true">💘</span></h1>
-    <p class="subtitle">Choose wisely. One of these buttons is… slippery.</p>
+    <h1 class="title">Will you be my Valentine? 💘</h1>
+    <p class="subtitle">Choose wisely. One of these buttons runs away.</p>
 
     <div class="arena" id="arena">
-      <div class="burst" id="burst"></div>
-
       <button id="yes">Yes</button>
       <button id="no">No</button>
     </div>
 
+    <!-- hidden gif -->
+    <img id="winGif" class="gif" src="love.gif" hidden>
+
     <div class="msg" id="msg"></div>
+
   </div>
+
 
   <script>
     const arena = document.getElementById("arena");
-    const card  = document.getElementById("card");
     const noBtn = document.getElementById("no");
-    const yesBtn= document.getElementById("yes");
-    const msg   = document.getElementById("msg");
-    const burst = document.getElementById("burst");
+    const yesBtn = document.getElementById("yes");
+    const msg = document.getElementById("msg");
+    const winGif = document.getElementById("winGif");
 
-    // --- helper: random number in range
-    const rand = (min, max) => Math.random() * (max - min) + min;
+    const rand = (min,max)=>Math.random()*(max-min)+min;
 
-    // --- spawn a little heart particle at x/y (relative to arena)
-    function spawnHeart(x, y){
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.textContent = Math.random() < 0.5 ? "💖" : "💘";
-      h.style.left = `${x}px`;
-      h.style.top  = `${y}px`;
-      h.style.transform = `translate(-50%, -50%) rotate(${rand(-18, 18)}deg)`;
+    function spawnHeart(x,y){
+      const h=document.createElement("div");
+      h.className="heart";
+      h.textContent=Math.random()<.5?"💖":"💘";
+      h.style.left=x+"px";
+      h.style.top=y+"px";
       arena.appendChild(h);
-      setTimeout(() => h.remove(), 950);
+      setTimeout(()=>h.remove(),900);
     }
 
-    // --- keep "No" inside arena bounds (and avoid overlapping edges)
-    function teleportNoButton() {
-      const pad = 10;
+    function teleportNo(){
+      const a=arena.getBoundingClientRect();
+      const b=noBtn.getBoundingClientRect();
 
-      const a = arena.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
+      const x=Math.random()*(a.width-b.width);
+      const y=Math.random()*(a.height-b.height);
 
-      const maxX = a.width  - b.width  - pad;
-      const maxY = a.height - b.height - pad;
-
-      const x = pad + Math.random() * Math.max(0, maxX);
-      const y = pad + Math.random() * Math.max(0, maxY);
-
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top  = `${y}px`;
+      noBtn.style.left=x+"px";
+      noBtn.style.top=y+"px";
     }
 
-    // --- proximity detection makes "No" run away
-    function onPointerMove(e) {
-      const a = arena.getBoundingClientRect();
-      const b = noBtn.getBoundingClientRect();
-
-      const px = e.clientX - a.left;
-      const py = e.clientY - a.top;
-
-      const bx = (b.left - a.left) + b.width / 2;
-      const by = (b.top  - a.top ) + b.height/ 2;
-
-      const dist = Math.hypot(px - bx, py - by);
-
-      // sparkle hearts near the cursor (throttled by randomness)
-      if (Math.random() < 0.12) spawnHeart(px, py);
-
-      if (dist < 110) teleportNoButton();
-    }
-
-    arena.addEventListener("pointermove", onPointerMove);
-    noBtn.addEventListener("pointerenter", teleportNoButton);
-    noBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); teleportNoButton(); });
-
-    // --- win state animation
-    function celebrate(){
-      // message
-      msg.textContent = "YAY!! 🥳💖";
-      // lock buttons
-      noBtn.style.display = "none";
-      yesBtn.textContent = "💞";
-
-      // little bounce
-      card.animate(
-        [{ transform:"translateY(0) scale(1)" }, { transform:"translateY(-6px) scale(1.02)" }, { transform:"translateY(0) scale(1)" }],
-        { duration: 520, easing:"cubic-bezier(.2,.8,.2,1)" }
+    arena.addEventListener("pointermove",e=>{
+      const rect=noBtn.getBoundingClientRect();
+      const d=Math.hypot(
+        e.clientX-(rect.left+rect.width/2),
+        e.clientY-(rect.top+rect.height/2)
       );
 
-      // burst confetti squares
-      burst.innerHTML = "";
-      for(let i=0;i<26;i++){
-        const s = document.createElement("span");
-        const angle = rand(0, Math.PI*2);
-        const dist  = rand(60, 180);
-        const dx = Math.cos(angle) * dist;
-        const dy = Math.sin(angle) * dist;
-        s.style.left = "50%";
-        s.style.top  = "50%";
-        s.style.setProperty("--dx", `${dx}px`);
-        s.style.setProperty("--dy", `${dy}px`);
-        s.style.background = `hsl(${Math.floor(rand(330, 420)) % 360} 90% 70%)`;
-        burst.appendChild(s);
-      }
-      burst.classList.add("show");
-      setTimeout(() => burst.classList.remove("show"), 900);
+      if(Math.random()<.12)
+        spawnHeart(e.clientX-arena.getBoundingClientRect().left,
+                   e.clientY-arena.getBoundingClientRect().top);
 
-      // a few hearts too
-      const a = arena.getBoundingClientRect();
-      for(let i=0;i<18;i++){
-        spawnHeart(rand(20, a.width-20), rand(30, a.height-30));
-      }
-    }
+      if(d<110) teleportNo();
+    });
 
-    yesBtn.addEventListener("click", celebrate);
+    noBtn.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      teleportNo();
+    });
 
-    // start playful
-    teleportNoButton();
+    yesBtn.addEventListener("click",()=>{
+      msg.textContent="YAY!! 🥳💖";
+      winGif.hidden=false;   // 👈 shows GIF
+      noBtn.style.display="none";
+      yesBtn.textContent="💞";
+    });
+
+    teleportNo();
   </script>
+
 </body>
 </html>
-
