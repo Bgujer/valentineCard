@@ -5,58 +5,184 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Be my Valentine?</title>
   <style>
-    :root { --bg: #ffe6ee; --card: #fff; --text:#222; }
-    body{
-      margin:0; height:100vh; display:grid; place-items:center;
-      background: radial-gradient(circle at top, #fff, var(--bg));
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
+    :root{
+      --bg1:#ffd6e6;
+      --bg2:#fff1f6;
+      --card:#ffffffcc;
+      --stroke:#ffffff80;
+      --text:#1f1f1f;
+      --yes:#ff3b6a;
+      --yes2:#ff7aa2;
+      --no:#f1f1f1;
     }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; height:100vh; overflow:hidden;
+      display:grid; place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 20% 10%, #fff, transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, #fff, transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    /* Floating background blobs */
+    .blob{
+      position:absolute; inset:auto;
+      width:340px; height:340px; border-radius:50%;
+      filter: blur(24px);
+      opacity:.55;
+      animation: drift 10s ease-in-out infinite alternate;
+      pointer-events:none;
+    }
+    .blob.b1{ background:#ff5d8f; left:-80px; top:-80px; animation-duration:12s; }
+    .blob.b2{ background:#ffd166; right:-120px; top:40px; animation-duration:14s; }
+    .blob.b3{ background:#7bdff2; left:20px; bottom:-140px; animation-duration:16s; opacity:.35; }
+
+    @keyframes drift{
+      from{ transform: translate(0,0) scale(1); }
+      to{ transform: translate(40px,30px) scale(1.05); }
+    }
+
     .card{
-      width:min(520px, 92vw);
-      background:var(--card);
-      border-radius:24px;
-      padding:28px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.12);
-      text-align:center;
+      width:min(560px, 92vw);
+      padding:28px 26px 22px;
+      border-radius:28px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 30px 90px rgba(0,0,0,.18);
+      backdrop-filter: blur(10px);
       position:relative;
+      isolation:isolate;
+      transform: translateY(6px);
+      animation: popIn .6s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+    @keyframes popIn{
+      from{ opacity:0; transform: translateY(18px) scale(.98); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    .title{
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      margin:0 0 8px;
+      font-size: clamp(22px, 4vw, 36px);
+      letter-spacing:-0.5px;
+    }
+    .subtitle{
+      margin:0;
+      opacity:.75;
+      font-size: 15px;
+    }
+
+    .arena{
+      margin-top:22px;
+      height:170px;
+      border-radius:22px;
+      position:relative;
+      background: linear-gradient(180deg, #ffffffaa, #ffffff55);
+      border: 1px dashed #ffffffaa;
       overflow:hidden;
     }
-    h1{ margin:0 0 18px; font-size:clamp(22px, 4vw, 34px); }
-    .buttons{
-      margin-top:20px;
-      height:140px;
-      position:relative;
-    }
+
     button{
       border:0;
       padding:14px 22px;
       border-radius:999px;
       font-size:18px;
       cursor:pointer;
-      box-shadow: 0 10px 25px rgba(0,0,0,.12);
-      transition: transform .12s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,.14);
       user-select:none;
       touch-action: none;
+      position:absolute;
+      transition: transform .12s ease, filter .12s ease;
     }
-    #yes{ background:#ff4d6d; color:white; }
-    #yes:hover{ transform: translateY(-2px); }
-    #no{ background:#e9e9e9; }
+    button:active{ transform: scale(.98); }
+    #yes{
+      left: 38%; top: 36%;
+      color:white;
+      background: linear-gradient(135deg, var(--yes), var(--yes2));
+    }
+    #yes:hover{ filter: brightness(1.05); transform: translateY(-2px); }
+    #no{
+      left: 56%; top: 36%;
+      background: var(--no);
+    }
+
     .msg{
-      margin-top:18px;
-      font-size:22px;
-      font-weight:700;
-      min-height:1.2em;
+      margin-top:14px;
+      min-height: 40px;
+      font-size: 20px;
+      font-weight: 800;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .badge{
+      display:inline-flex;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      background:#ffffff90;
+      border:1px solid #ffffffaa;
+      position:absolute;
+      top:14px; right:14px;
+      opacity:.85;
+    }
+
+    /* Little heart particles */
+    .heart{
+      position:absolute;
+      font-size:18px;
+      pointer-events:none;
+      animation: floatUp 900ms ease-out forwards;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.12));
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(0) scale(.9); opacity:1; }
+      to{ transform: translateY(-60px) scale(1.25); opacity:0; }
+    }
+
+    /* Confetti-ish burst for win */
+    .burst{
+      position:absolute; inset:0;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .2s ease;
+    }
+    .burst.show{ opacity:1; }
+    .burst span{
+      position:absolute;
+      width:10px; height:10px;
+      border-radius:3px;
+      background: white;
+      opacity:.9;
+      animation: pop 900ms cubic-bezier(.2,.8,.2,1) forwards;
+    }
+    @keyframes pop{
+      from{ transform: translate(0,0) rotate(0deg) scale(.7); opacity:1; }
+      to{ transform: translate(var(--dx), var(--dy)) rotate(240deg) scale(1.1); opacity:0; }
     }
   </style>
 </head>
 <body>
-  <div class="card" id="card">
-    <h1>Will you be my Valentine? 💘</h1>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
 
-    <div class="buttons" id="arena">
-      <button id="yes" style="position:absolute; left: 42%; top: 30%;">Yes</button>
-      <button id="no"  style="position:absolute; left: 58%; top: 30%;">No</button>
+  <div class="card" id="card">
+    <div class="badge">💌 made with love</div>
+
+    <h1 class="title">Will you be my Valentine? <span aria-hidden="true">💘</span></h1>
+    <p class="subtitle">Choose wisely. One of these buttons is… slippery.</p>
+
+    <div class="arena" id="arena">
+      <div class="burst" id="burst"></div>
+
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
     </div>
 
     <div class="msg" id="msg"></div>
@@ -64,11 +190,28 @@
 
   <script>
     const arena = document.getElementById("arena");
-    const noBtn  = document.getElementById("no");
-    const yesBtn = document.getElementById("yes");
-    const msg    = document.getElementById("msg");
+    const card  = document.getElementById("card");
+    const noBtn = document.getElementById("no");
+    const yesBtn= document.getElementById("yes");
+    const msg   = document.getElementById("msg");
+    const burst = document.getElementById("burst");
 
-    // Move the "No" button somewhere else inside the arena
+    // --- helper: random number in range
+    const rand = (min, max) => Math.random() * (max - min) + min;
+
+    // --- spawn a little heart particle at x/y (relative to arena)
+    function spawnHeart(x, y){
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = Math.random() < 0.5 ? "💖" : "💘";
+      h.style.left = `${x}px`;
+      h.style.top  = `${y}px`;
+      h.style.transform = `translate(-50%, -50%) rotate(${rand(-18, 18)}deg)`;
+      arena.appendChild(h);
+      setTimeout(() => h.remove(), 950);
+    }
+
+    // --- keep "No" inside arena bounds (and avoid overlapping edges)
     function teleportNoButton() {
       const pad = 10;
 
@@ -85,7 +228,7 @@
       noBtn.style.top  = `${y}px`;
     }
 
-    // If the cursor (or finger) gets close, the "No" runs away
+    // --- proximity detection makes "No" run away
     function onPointerMove(e) {
       const a = arena.getBoundingClientRect();
       const b = noBtn.getBoundingClientRect();
@@ -98,22 +241,60 @@
 
       const dist = Math.hypot(px - bx, py - by);
 
-      if (dist < 90) teleportNoButton();
+      // sparkle hearts near the cursor (throttled by randomness)
+      if (Math.random() < 0.12) spawnHeart(px, py);
+
+      if (dist < 110) teleportNoButton();
     }
 
-    // Desktop + mobile support
     arena.addEventListener("pointermove", onPointerMove);
     noBtn.addEventListener("pointerenter", teleportNoButton);
-    noBtn.addEventListener("click", (e) => { e.preventDefault(); teleportNoButton(); });
+    noBtn.addEventListener("pointerdown", (e) => { e.preventDefault(); teleportNoButton(); });
 
-    yesBtn.addEventListener("click", () => {
+    // --- win state animation
+    function celebrate(){
+      // message
       msg.textContent = "YAY!! 🥳💖";
+      // lock buttons
       noBtn.style.display = "none";
-      yesBtn.textContent = "😄";
-    });
+      yesBtn.textContent = "💞";
 
-    // Start with a random spot so it feels playful
+      // little bounce
+      card.animate(
+        [{ transform:"translateY(0) scale(1)" }, { transform:"translateY(-6px) scale(1.02)" }, { transform:"translateY(0) scale(1)" }],
+        { duration: 520, easing:"cubic-bezier(.2,.8,.2,1)" }
+      );
+
+      // burst confetti squares
+      burst.innerHTML = "";
+      for(let i=0;i<26;i++){
+        const s = document.createElement("span");
+        const angle = rand(0, Math.PI*2);
+        const dist  = rand(60, 180);
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist;
+        s.style.left = "50%";
+        s.style.top  = "50%";
+        s.style.setProperty("--dx", `${dx}px`);
+        s.style.setProperty("--dy", `${dy}px`);
+        s.style.background = `hsl(${Math.floor(rand(330, 420)) % 360} 90% 70%)`;
+        burst.appendChild(s);
+      }
+      burst.classList.add("show");
+      setTimeout(() => burst.classList.remove("show"), 900);
+
+      // a few hearts too
+      const a = arena.getBoundingClientRect();
+      for(let i=0;i<18;i++){
+        spawnHeart(rand(20, a.width-20), rand(30, a.height-30));
+      }
+    }
+
+    yesBtn.addEventListener("click", celebrate);
+
+    // start playful
     teleportNoButton();
   </script>
 </body>
 </html>
+
